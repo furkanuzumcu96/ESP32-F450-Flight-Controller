@@ -1,0 +1,15 @@
+# Arduino compilation artifacts
+*.hex
+*.bin
+*.elf
+*.o
+*.d
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE local settings
+.vscode/
+.pio/
