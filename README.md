@@ -80,6 +80,43 @@ Zero-throttle requirement for arming switch transition (AUX1 / CH5).
 
 
 
+### 📐 Wiring & Interconnection Diagram
+
+```mermaid
+graph TD
+    subgraph Power & Radio
+        BATT[3S/4S LiPo Battery] -->|VBat| PDB[Power Distribution Board]
+        PDB -->|5V / GND| ESP32[ESP32 Dev Board]
+        RX[FlySky Receiver] -->|PPM Signal| ESP32_GPIO32[GPIO 32: Interrupt]
+        PDB -->|5V / GND| RX
+    end
+
+    subgraph Sensor Bus
+        MPU[MPU-6050 6-DOF IMU] -->|SDA| ESP32_GPIO21[GPIO 21: I2C SDA]
+        MPU -->|SCL| ESP32_GPIO22[GPIO 22: I2C SCL]
+        ESP32 -->|3.3V / GND| MPU
+    end
+
+    subgraph Actuation System
+        ESP32_CH0[GPIO 27: LEDC CH0] -->|PWM Signal| ESC1[ESC 1 - Rear Left CCW]
+        ESP32_CH1[GPIO 25: LEDC CH1] -->|PWM Signal| ESC2[ESC 2 - Front Left CW]
+        ESP32_CH2[GPIO 4: LEDC CH2]  -->|PWM Signal| ESC3[ESC 3 - Front Right CCW]
+        ESP32_CH3[GPIO 14: LEDC CH3] -->|PWM Signal| ESC4[ESC 4 - Rear Right CW]
+        
+        PDB -->|DC Power| ESC1
+        PDB -->|DC Power| ESC2
+        PDB -->|DC Power| ESC3
+        PDB -->|DC Power| ESC4
+    end
+
+    classDef controller fill:#1f2937,stroke:#3b82f6,stroke-width:2px,color:#fff;
+    classDef peripheral fill:#111827,stroke:#10b981,stroke-width:1px,color:#fff;
+    classDef motor fill:#111827,stroke:#f59e0b,stroke-width:1px,color:#fff;
+    class ESP32 controller;
+    class MPU,RX peripheral;
+    class ESC1,ESC2,ESC3,ESC4 motor;
+```
+
 
 🚀 Getting Started
 1-Connect hardware according to the pinout table above.
