@@ -1,24 +1,23 @@
-🛸 ESP32 Bare-Metal Flight Controller (F450 Platform)
-
-**> 📦 **Firmware Source Code:** [`ESP32_Flight_Controller.ino`](./ESP32_Flight_Controller.ino)**
+# 🛸 ESP32 Bare-Metal Flight Controller (F450 Platform)
 
 ![Language](https://img.shields.io/badge/Language-C%2B%2B-00599C?style=flat-square&logo=c%2B%2B)
 ![Hardware](https://img.shields.io/badge/Hardware-ESP32%20%7C%20MPU6050-red?style=flat-square)
 ![Loop Rate](https://img.shields.io/badge/Loop%20Rate-250Hz%20(4ms)-brightgreen?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/e05c7859-3ff7-4cea-91d6-589dc4be4942" alt="F450 ESP32 Flight Controller Hardware" width="650">
-</p>
+> 📦 **Firmware Source Code:** [`ESP32_Flight_Controller.ino`](./ESP32_Flight_Controller.ino)
 
+<p align="center">
+  <img src="[https://github.com/user-attachments/assets/e05c7859-3ff7-4cea-91d6-589dc4be4942](https://github.com/user-attachments/assets/e05c7859-3ff7-4cea-91d6-589dc4be4942)" alt="F450 ESP32 Flight Controller Hardware" width="650">
+</p>
 
 A lightweight, high-reliability custom flight controller firmware engineered from scratch in C/C++ for an F450 quadcopter. Bypassing bulky third-party flight stacks, this firmware operates directly on the ESP32 hardware timers to achieve deterministic 250 Hz real-time attitude estimation, multi-axis PID stabilization, and 16-bit hardware-level PWM motor actuation.
 
 ---
 
- 📐 System Architecture & Control Pipeline
+## 📐 System Architecture & Control Pipeline
 
-The firmware operates on a non-blocking, microsecond-accurate loop:
+The firmware operates on a non-blocking, microsecond-accurate deterministic loop:
 
 ```text
 +-------------------------------------------------------------+
@@ -39,34 +38,26 @@ The firmware operates on a non-blocking, microsecond-accurate loop:
 |                                        | (50Hz / 16-bit)  | |
 |                                        +------------------+ |
 +-------------------------------------------------------------+
+```
 
+---
 
+## ⚡ Key Engineering Features
 
-⚡ Key Engineering Features
-Deterministic 250 Hz Loop: Precise micros() tracking ensures minimal jitter and exact numerical integration for attitude kinematics.
+* **Deterministic 250 Hz Loop:** Precise `micros()` tracking ensures minimal timing jitter and exact numerical integration for attitude kinematics.
+* **Sensor Fusion (Complementary Filter):** Blends high-frequency rate-gyro data with low-frequency accelerometer tilt over high-speed 400 kHz I2C ($α = 0.98$).
+* **Angle PID Stabilization:**
+  * **Proportional (P):** Fast dynamic response to angular displacement.
+  * **Integral (I) with Anti-Windup:** Clamped on ground/low-throttle to eliminate spool-up tip-over.
+  * **Derivative (D):** Direct angular rate dampening against oscillations.
+* **Bare-Metal Motor Driving:** Direct ESP32 LEDC hardware timers (16-bit, 50 Hz base) producing clean ESC actuation without software timing overhead.
+* **Failsafe & Arming Safety:**
+  * Auto-disarm cut-off if roll/pitch exceeds 45 degrees.
+  * Zero-throttle requirement for arming switch transition (CH5).
 
-Sensor Fusion (Complementary Filter): Blends high-frequency rate-gyro data with low-frequency accelerometer tilt over high-speed 400 kHz I2C.
+---
 
-Angle PID Stabilization:
-
-Proportional (P): Fast dynamic response to angular displacement.
-
-Integral (I) with Anti-Windup: Actively clamped while on the ground / low-throttle to prevent tip-over upon spool-up.
-
-Derivative (D): Direct angular velocity dampening to eliminate oscillations.
-
-Bare-Metal Motor Driving: Utilizes ESP32's internal LEDC hardware timers (16-bit resolution, 50 Hz base rate) to generate stable ESC control signals without software-timing overhead.
-
-Fail-Safe & Safety Logic:
-
-Automated emergency engine shutdown if roll or pitch angle exceeds 45 degrees.
-
-Zero-throttle requirement for arming switch transition (AUX1 / CH5).
-
-
-
-
-🔌 Hardware Configuration & Pinout
+## 🔌 Hardware Configuration & Pinout
 
 | Peripheral | Component / Signal | ESP32 Pin | Interface / Protocol |
 | :--- | :--- | :--- | :--- |
@@ -77,7 +68,6 @@ Zero-throttle requirement for arming switch transition (AUX1 / CH5).
 | **Motor 2** | Front Left (CW) | `GPIO 25` | LEDC PWM (CH1) |
 | **Motor 3** | Front Right (CCW) | `GPIO 4` | LEDC PWM (CH2) |
 | **Motor 4** | Rear Right (CW) | `GPIO 14` | LEDC PWM (CH3) |
-
 
 ### 📐 Wiring & Interconnection Diagram
 
@@ -114,17 +104,13 @@ flowchart TD
     ESP32 --> G14
 ```
 
+---
 
+## 🚀 Getting Started
 
-🚀 Getting Started
-1-Connect hardware according to the pinout table above.
-
-2-Open ESP32_Flight_Controller.ino in Arduino IDE.
-
-3-Ensure the ESP32 board package is installed.
-
-4-Select ESP32 Dev Module under Tools > Board.
-
-5-Keep the quadcopter stationary on a level surface during power-up for automatic IMU gyro calibration.
-
-6-Arm via the designated transmitter switch (CH5) with throttle at minimum.
+1. Connect hardware according to the pinout table above.
+2. Open `ESP32_Flight_Controller.ino` in Arduino IDE.
+3. Ensure the ESP32 board package is installed.
+4. Select **ESP32 Dev Module** under **Tools > Board**.
+5. Keep the quadcopter stationary on a level surface during power-up for automatic IMU gyro calibration.
+6. Arm via the designated transmitter switch (CH5) with throttle at minimum.
