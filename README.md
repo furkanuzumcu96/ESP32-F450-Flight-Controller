@@ -79,43 +79,41 @@ Zero-throttle requirement for arming switch transition (AUX1 / CH5).
 | **Motor 4** | Rear Right (CW) | `GPIO 14` | LEDC PWM (CH3) |
 
 
-
 ### 📐 Wiring & Interconnection Diagram
 
 ```mermaid
-graph TD
-    subgraph Power & Radio
-        BATT[3S/4S LiPo Battery] -->|VBat| PDB[Power Distribution Board]
-        PDB -->|5V / GND| ESP32[ESP32 Dev Board]
-        RX[FlySky Receiver] -->|PPM Signal| ESP32_GPIO32[GPIO 32: Interrupt]
-        PDB -->|5V / GND| RX
+flowchart TD
+    subgraph POWER[Power System]
+        BATT[LiPo Battery] --> PDB[PDB]
+        PDB -->|5V / GND| ESP32[ESP32 Board]
+        PDB -->|Power| ESC1[ESC 1]
+        PDB -->|Power| ESC2[ESC 2]
+        PDB -->|Power| ESC3[ESC 3]
+        PDB -->|Power| ESC4[ESC 4]
     end
 
-    subgraph Sensor Bus
-        MPU[MPU-6050 6-DOF IMU] -->|SDA| ESP32_GPIO21[GPIO 21: I2C SDA]
-        MPU -->|SCL| ESP32_GPIO22[GPIO 22: I2C SCL]
-        ESP32 -->|3.3V / GND| MPU
+    subgraph SENSORS[Sensors & RX]
+        MPU[MPU-6050] -->|SDA| G21[GPIO 21]
+        MPU -->|SCL| G22[GPIO 22]
+        RX[FlySky Receiver] -->|PPM| G32[GPIO 32]
     end
 
-    subgraph Actuation System
-        ESP32_CH0[GPIO 27: LEDC CH0] -->|PWM Signal| ESC1[ESC 1 - Rear Left CCW]
-        ESP32_CH1[GPIO 25: LEDC CH1] -->|PWM Signal| ESC2[ESC 2 - Front Left CW]
-        ESP32_CH2[GPIO 4: LEDC CH2]  -->|PWM Signal| ESC3[ESC 3 - Front Right CCW]
-        ESP32_CH3[GPIO 14: LEDC CH3] -->|PWM Signal| ESC4[ESC 4 - Rear Right CW]
-        
-        PDB -->|DC Power| ESC1
-        PDB -->|DC Power| ESC2
-        PDB -->|DC Power| ESC3
-        PDB -->|DC Power| ESC4
+    subgraph MOTORS[ESC Control]
+        G27[GPIO 27] -->|PWM| ESC1
+        G25[GPIO 25] -->|PWM| ESC2
+        G4[GPIO 4] -->|PWM| ESC3
+        G14[GPIO 14] -->|PWM| ESC4
     end
 
-    classDef controller fill:#1f2937,stroke:#3b82f6,stroke-width:2px,color:#fff;
-    classDef peripheral fill:#111827,stroke:#10b981,stroke-width:1px,color:#fff;
-    classDef motor fill:#111827,stroke:#f59e0b,stroke-width:1px,color:#fff;
-    class ESP32 controller;
-    class MPU,RX peripheral;
-    class ESC1,ESC2,ESC3,ESC4 motor;
+    G21 --> ESP32
+    G22 --> ESP32
+    G32 --> ESP32
+    ESP32 --> G27
+    ESP32 --> G25
+    ESP32 --> G4
+    ESP32 --> G14
 ```
+
 
 
 🚀 Getting Started
