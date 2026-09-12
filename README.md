@@ -1,5 +1,7 @@
 🛸 ESP32 Bare-Metal Flight Controller (F450 Platform)
 
+**> 📦 **Firmware Source Code:** [`ESP32_Flight_Controller.ino`](./ESP32_Flight_Controller.ino)**
+
 ![Language](https://img.shields.io/badge/Language-C%2B%2B-00599C?style=flat-square&logo=c%2B%2B)
 ![Hardware](https://img.shields.io/badge/Hardware-ESP32%20%7C%20MPU6050-red?style=flat-square)
 ![Loop Rate](https://img.shields.io/badge/Loop%20Rate-250Hz%20(4ms)-brightgreen?style=flat-square)
