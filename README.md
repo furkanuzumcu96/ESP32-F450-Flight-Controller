@@ -10,7 +10,6 @@
 <p align="center">
   <img src="https://github.com/user-attachments/assets/e05c7859-3ff7-4cea-91d6-589dc4be4942" alt="F450 ESP32 Flight Controller Hardware" width="650">
 </p>
-A lightweight, high-reliability custom flight controller firmware engineered from scratch in C/C++ for an F450 quadcopter...
 
 
 A lightweight, high-reliability custom flight controller firmware engineered from scratch in C/C++ for an F450 quadcopter. Bypassing bulky third-party flight stacks, this firmware operates directly on the ESP32 hardware timers to achieve deterministic 250 Hz real-time attitude estimation, multi-axis PID stabilization, and 16-bit hardware-level PWM motor actuation.
