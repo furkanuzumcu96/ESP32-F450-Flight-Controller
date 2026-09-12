@@ -8,7 +8,7 @@
 > 📦 **Firmware Source Code:** [`ESP32_Flight_Controller.ino`](./ESP32_Flight_Controller.ino)
 
 <p align="center">
-  <img src="[https://github.com/user-attachments/assets/e05c7859-3ff7-4cea-91d6-589dc4be4942](https://github.com/user-attachments/assets/e05c7859-3ff7-4cea-91d6-589dc4be4942)" alt="F450 ESP32 Flight Controller Hardware" width="650">
+  <img src="https://github.com/user-attachments/assets/e05c7859-3ff7-4cea-91d6-589dc4be4942" width="650" />
 </p>
 
 A lightweight, high-reliability custom flight controller firmware engineered from scratch in C/C++ for an F450 quadcopter. Bypassing bulky third-party flight stacks, this firmware operates directly on the ESP32 hardware timers to achieve deterministic 250 Hz real-time attitude estimation, multi-axis PID stabilization, and 16-bit hardware-level PWM motor actuation.
@@ -72,39 +72,30 @@ The firmware operates on a non-blocking, microsecond-accurate deterministic loop
 ### 📐 Wiring & Interconnection Diagram
 
 ```mermaid
-flowchart TD
-    subgraph POWER[Power System]
-        BATT[LiPo Battery] --> PDB[PDB]
-        PDB -->|5V / GND| ESP32[ESP32 Board]
-        PDB -->|Power| ESC1[ESC 1]
-        PDB -->|Power| ESC2[ESC 2]
-        PDB -->|Power| ESC3[ESC 3]
-        PDB -->|Power| ESC4[ESC 4]
+flowchart LR
+    subgraph SENSORS ["📡 Sensors & Radio"]
+        direction TB
+        MPU["MPU-6050 (IMU)"] -- "SDA (GPIO 21)<br/>SCL (GPIO 22)" --> ESP
+        RX["FlySky Rx (PPM)"] -- "Signal (GPIO 32)" --> ESP
     end
 
-    subgraph SENSORS[Sensors & RX]
-        MPU[MPU-6050] -->|SDA| G21[GPIO 21]
-        MPU -->|SCL| G22[GPIO 22]
-        RX[FlySky Receiver] -->|PPM| G32[GPIO 32]
+    ESP{{"⚡ ESP32 Core<br/>(250 Hz Loop)"}}
+
+    subgraph ACTUATORS ["🚁 ESCs & Motors"]
+        direction TB
+        ESP -- "GPIO 27 (CH0)" --> M1["ESC 1 (Rear-L CCW)"]
+        ESP -- "GPIO 25 (CH1)" --> M2["ESC 2 (Front-L CW)"]
+        ESP -- "GPIO 04 (CH2)" --> M3["ESC 3 (Front-R CCW)"]
+        ESP -- "GPIO 14 (CH3)" --> M4["ESC 4 (Rear-R CW)"]
     end
 
-    subgraph MOTORS[ESC Control]
-        G27[GPIO 27] -->|PWM| ESC1
-        G25[GPIO 25] -->|PWM| ESC2
-        G4[GPIO 4] -->|PWM| ESC3
-        G14[GPIO 14] -->|PWM| ESC4
+    subgraph POWER ["🔋 Power Bus"]
+        direction LR
+        BATT["LiPo 3S/4S"] --> PDB["Power Dist. Board (PDB)"]
+        PDB -. "5V / GND" .-> ESP
+        PDB -. "VBat" .-> ACTUATORS
     end
-
-    G21 --> ESP32
-    G22 --> ESP32
-    G32 --> ESP32
-    ESP32 --> G27
-    ESP32 --> G25
-    ESP32 --> G4
-    ESP32 --> G14
 ```
-
----
 
 ## 🚀 Getting Started
 
